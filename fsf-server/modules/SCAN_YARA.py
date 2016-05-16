@@ -24,7 +24,13 @@ import yara
 
 def SCAN_YARA(s, buff):
 
-   rules = yara.compile(s.yara_rule_path)
+   try:  # try and compile all rules, if that fails try to compile just the rules that trigger FSF modules.
+      rules = yara.compile(filepaths={
+         "triggers" : "s.yara_trigger_path",
+         "rules" : "s.yara_rule_path"}
+      )
+   except yara.YaraSyntaxError:
+      rules = yara.compile(s.yara_trigger_path)
 
    results = { }
    if rules:

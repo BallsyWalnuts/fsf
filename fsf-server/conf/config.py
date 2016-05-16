@@ -7,8 +7,9 @@
 import socket
 
 SCANNER_CONFIG = { 'LOG_PATH' : '/tmp',
-                   'YARA_PATH' : '/FULL/PATH/TO/fsf/fsf-server/yara/rules.yara',
-                   'EXPORT_PATH' : '/tmp',
+                   'YARA_PATH' : '/FULL/PATH/TO/fsf-server/yara/rules.yara',
+                   'YARA_TRIGGER_PATH' : '/FULL/PATH/TO/fsf-server/yara/module_triggers/triggers.yara',
+                   'EXPORT_PATH' : '/data/malware/',
                    'TIMEOUT' : 60,
                    'MAX_DEPTH' : 10 }
 
