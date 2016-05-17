@@ -39,7 +39,7 @@ class Scanner:
       self.suppress_report = ""
       self.file = ""
       self.yara_rule_path = config.SCANNER_CONFIG['YARA_PATH']
-      self.yara_trigger_path = config.SCANNER_CONFIG['YARA_TRIGGER_PATH']
+      self.module_trigger_path = config.SCANNER_CONFIG['MODULE_TRIGGER_PATH']
       self.export_path = config.SCANNER_CONFIG['EXPORT_PATH']
       self.log_path = config.SCANNER_CONFIG['LOG_PATH']
       self.max_depth = config.SCANNER_CONFIG['MAX_DEPTH']
@@ -80,7 +80,6 @@ class Scanner:
       dbg_rotateHandler = ConcurrentRotatingFileHandler(dbglog, "a")
       self.dbg_h.addHandler(dbg_rotateHandler)
       self.dbg_h.setLevel(logging.ERROR)
-
       self.scan_h = logging.getLogger('scan_log')
       scanlog = '%s/%s' % (self.log_path, 'scan.log')
       scan_rotateHandler = ConcurrentRotatingFileHandler(scanlog, "a")
@@ -88,10 +87,25 @@ class Scanner:
       self.scan_h.setLevel(logging.INFO)
 
    def check_yara_file(self):
+      """
+      Ensure that yara rules are in good order by testing to see if the files are there and then by compiling them
+      :return: EMPTY
+      """
+      import yara
 
-      # Ensure Yara rule file exists before proceeding
       if not os.path.isfile(self.yara_rule_path):
          self.dbg_h.error('%s Could not load Yara rule file. File %s, does not exist!' % (dt.now(), self.yara_rule_path))
+         sys.exit(2)
+      if not os.path.isfile(self.module_trigger_path):
+         self.dbg_h.error('%s Could not load module triggers rule file. File %s does not exist!' %
+                          (dt.now(), self.module_trigger_path))
+         sys.exit(2)
+      try:
+         rules = yara.compile(filepaths={
+            "triggers" : self.module_trigger_path,
+            "signatures" : self.yara_rule_path})
+      except Exception, err:
+         self.dbg_h.error('%s Could not compile yara rules! %s' % (dt.now(), err))
          sys.exit(2)
 
    def scan_file(self):

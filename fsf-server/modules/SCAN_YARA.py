@@ -21,16 +21,19 @@
 
 import sys
 import yara
+from datetime import datetime as dt
 
 def SCAN_YARA(s, buff):
 
    try:  # try and compile all rules, if that fails try to compile just the rules that trigger FSF modules.
       rules = yara.compile(filepaths={
-         "triggers" : "s.yara_trigger_path",
-         "rules" : "s.yara_rule_path"}
+         "triggers" : s.module_trigger_path,
+         "signatures" : s.yara_rule_path}
       )
-   except yara.YaraSyntaxError:
-      rules = yara.compile(s.yara_trigger_path)
+   except Exception:
+      rules = yara.compile(s.module_trigger_path)
+      s.dbg_h.error('%s Yara Signatures failed to compile! Only signatures required for module execution will be used' %
+                    dt.now())
 
    results = { }
    if rules:
