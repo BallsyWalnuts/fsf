@@ -39,6 +39,7 @@ class Scanner:
       self.suppress_report = ""
       self.file = ""
       self.yara_rule_path = config.SCANNER_CONFIG['YARA_PATH']
+      self.yara_trigger_path = config.SCANNER_CONFIG['YARA_TRIGGER_PATH']
       self.export_path = config.SCANNER_CONFIG['EXPORT_PATH']
       self.log_path = config.SCANNER_CONFIG['LOG_PATH']
       self.max_depth = config.SCANNER_CONFIG['MAX_DEPTH']
